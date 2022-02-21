@@ -1,8 +1,8 @@
-numpy==1.16.1
-h5py==2.10.0
-cython==0.29.15
+numpy==1.22.0
+h5py==3.6.0
+cython==0.29.28
 open3d-python==0.3.0
-pandas==0.25.3
-scikit-learn==0.21.3
-scipy==1.4.1
-PyYAML==5.4
+pandas==1.4.1
+scikit-learn==1.0.2
+scipy==1.8.0
+PyYAML==6.0

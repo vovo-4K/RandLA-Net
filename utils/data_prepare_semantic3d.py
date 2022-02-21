@@ -1,15 +1,18 @@
-from sklearn.neighbors import KDTree
-from os.path import join, exists, dirname, abspath
-import numpy as np
-import os, glob, pickle
+import glob
+import os
+import pickle
 import sys
+from os.path import join, exists, dirname, abspath
+
+import numpy as np
+from sklearn.neighbors import KDTree
 
 BASE_DIR = dirname(abspath(__file__))
 ROOT_DIR = dirname(BASE_DIR)
 sys.path.append(BASE_DIR)
 sys.path.append(ROOT_DIR)
 from helper_ply import write_ply
-from helper_tool import DataProcessing as DP
+from helper_tool import DataProcessing as DataProc
 
 grid_size = 0.06
 dataset_path = '/data/semantic3d/original_data'
@@ -26,22 +29,22 @@ for pc_path in glob.glob(join(dataset_path, '*.txt')):
     if exists(join(sub_pc_folder, file_name + '_KDTree.pkl')):
         continue
 
-    pc = DP.load_pc_semantic3d(pc_path)
+    pc = DataProc.load_pc_semantic3d(pc_path)
     # check if label exists
     label_path = pc_path[:-4] + '.labels'
     if exists(label_path):
-        labels = DP.load_label_semantic3d(label_path)
+        labels = DataProc.load_label_semantic3d(label_path)
         full_ply_path = join(original_pc_folder, file_name + '.ply')
 
         #  Subsample to save space
-        sub_points, sub_colors, sub_labels = DP.grid_sub_sampling(pc[:, :3].astype(np.float32),
+        sub_points, sub_colors, sub_labels = DataProc.grid_sub_sampling(pc[:, :3].astype(np.float32),
                                                                   pc[:, 4:7].astype(np.uint8), labels, 0.01)
         sub_labels = np.squeeze(sub_labels)
 
         write_ply(full_ply_path, (sub_points, sub_colors, sub_labels), ['x', 'y', 'z', 'red', 'green', 'blue', 'class'])
 
         # save sub_cloud and KDTree file
-        sub_xyz, sub_colors, sub_labels = DP.grid_sub_sampling(sub_points, sub_colors, sub_labels, grid_size)
+        sub_xyz, sub_colors, sub_labels = DataProc.grid_sub_sampling(sub_points, sub_colors, sub_labels, grid_size)
         sub_colors = sub_colors / 255.0
         sub_labels = np.squeeze(sub_labels)
         sub_ply_file = join(sub_pc_folder, file_name + '.ply')
